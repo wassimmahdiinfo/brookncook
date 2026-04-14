@@ -19,6 +19,8 @@ export default function AdminPage() {
   router.push("/login");
 };
 
+const [user, setUser] = useState<any>(null);
+
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,7 @@ useEffect(() => {
     if (!user) {
       router.push("/login");
     } else {
+      setUser(user);
       setLoading(false);
     }
   };
@@ -149,15 +152,38 @@ if (loading) return <p>Loading...</p>;
   return (
     <main className="min-h-screen bg-[#fffaf5] p-6">
       
-      <button
-  onClick={handleLogout}
-  className="mb-6 bg-black text-white px-4 py-2 rounded"
->
-  Se déconnecter
-</button>
-      <h1 className="text-3xl font-bold mb-6 text-[#5c3d2e]">
-        Admin Dashboard
-      </h1>
+      <div className="flex items-center justify-between mb-8 border-b pb-4">
+
+  {/* LEFT */}
+  <div>
+    <h1 className="text-2xl md:text-3xl font-bold text-[#5c3d2e]">
+      Brook’n’Cook Admin
+    </h1>
+    <p className="text-sm text-gray-500">
+      Gestion des produits Brook’n’Cook
+    </p>
+  </div>
+
+  {/* RIGHT */}
+  <div className="flex items-center gap-4">
+
+    <div className="text-right">
+      <p className="text-sm text-gray-500">Connecté en tant que</p>
+      <p className="font-medium text-[#5c3d2e]">
+        {user?.email}
+      </p>
+    </div>
+
+    <button
+      onClick={handleLogout}
+      className="border border-[#5c3d2e] text-[#5c3d2e] px-4 py-2 rounded-lg hover:bg-[#5c3d2e] hover:text-white transition"
+    >
+      Se déconnecter
+    </button>
+
+  </div>
+
+</div>
 
       {/* FORM */}
       <div className="max-w-md mx-auto bg-white p-6 rounded-2xl shadow mb-10">
