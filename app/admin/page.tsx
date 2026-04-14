@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -11,6 +12,26 @@ export default function AdminPage() {
     price: "",
     description: "",
   });
+
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  const checkUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push("/login");
+    } else {
+      setLoading(false);
+    }
+  };
+
+  checkUser();
+}, []);
 
   const fetchProducts = async () => {
     const { data } = await supabase.from("products").select("*");
@@ -87,6 +108,7 @@ export default function AdminPage() {
   ]);
 };
 
+if (loading) return <p>Loading...</p>;
   return (
     <main className="min-h-screen bg-[#fffaf5] p-6">
       <h1 className="text-3xl font-bold mb-6 text-[#5c3d2e]">
