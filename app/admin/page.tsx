@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { logAction } from "@/utils/logger";
 
 export default function AdminPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -12,6 +13,11 @@ export default function AdminPage() {
     price: "",
     description: "",
   });
+
+  const handleLogout = async () => {
+  await supabase.auth.signOut();
+  router.push("/login");
+};
 
   const router = useRouter();
 
@@ -33,6 +39,33 @@ useEffect(() => {
   checkUser();
 }, []);
 
+const [imageFile, setImageFile] = useState<File | null>(null);
+
+const uploadImage = async () => {
+  if (!imageFile) return null;
+
+  const fileName = Date.now() + "-" + imageFile.name;
+
+  const { data, error } = await supabase.storage
+  .from("products")
+  .upload(fileName, imageFile);
+
+console.log("UPLOAD ERROR:", error);
+console.log("UPLOAD DATA:", data);
+
+  if (error) {
+    console.log(error);
+    return null;
+  }
+
+  const { data: publicUrl } = supabase.storage
+    .from("products")
+    .getPublicUrl(fileName);
+
+  return publicUrl.publicUrl;
+};
+
+
   const fetchProducts = async () => {
     const { data } = await supabase.from("products").select("*");
     setProducts(data || []);
@@ -44,14 +77,22 @@ useEffect(() => {
 
   // ➕ Ajouter
   const handleAdd = async () => {
+  const imageUrl = await uploadImage();
+
   const { data } = await supabase
     .from("products")
-    .insert([form])
+    .insert([
+      {
+        ...form,
+        image: imageUrl,
+      },
+    ])
     .select();
 
   await logAction("create", data?.[0]?.id);
 
   setForm({ name: "", price: "", description: "" });
+  setImageFile(null);
   fetchProducts();
 };
 
@@ -70,15 +111,25 @@ useEffect(() => {
   const confirmUpdate = confirm("Confirmer la modification ?");
   if (!confirmUpdate) return;
 
+  let imageUrl = null;
+
+  if (imageFile) {
+    imageUrl = await uploadImage();
+  }
+
   await supabase
     .from("products")
-    .update(form)
+    .update({
+      ...form,
+      ...(imageUrl && { image: imageUrl }),
+    })
     .eq("id", editingId);
 
   await logAction("update", editingId);
 
   setEditingId(null);
   setForm({ name: "", price: "", description: "" });
+  setImageFile(null);
   fetchProducts();
 };
 
@@ -92,25 +143,18 @@ useEffect(() => {
   await logAction("delete", id);
   fetchProducts();
 };
-
-  // log sql
-  const logAction = async (action: string, productId: string | null) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  await supabase.from("histo_action").insert([
-    {
-      action,
-      product_id: productId,
-      user_email: user?.email,
-    },
-  ]);
-};
+  
 
 if (loading) return <p>Loading...</p>;
   return (
     <main className="min-h-screen bg-[#fffaf5] p-6">
+      
+      <button
+  onClick={handleLogout}
+  className="mb-6 bg-black text-white px-4 py-2 rounded"
+>
+  Se déconnecter
+</button>
       <h1 className="text-3xl font-bold mb-6 text-[#5c3d2e]">
         Admin Dashboard
       </h1>
@@ -139,6 +183,12 @@ if (loading) return <p>Loading...</p>;
           }
           className="w-full mb-3 p-2 border rounded"
         />
+
+        <input
+  type="file"
+  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+  className="w-full mb-3"
+/>
 
         {editingId ? (
           <button
