@@ -18,17 +18,17 @@ export default function Navbar() {
         </Link>
 
         {/* MENU */}
-        <nav className="flex gap-6 text-sm font-medium">
-          <Link href="/" className="hover:text-[#5c3d2e]">
-            Accueil
-          </Link>
-          <Link href="/products" className="hover:text-[#5c3d2e]">
-            Produits
-          </Link>
-          <Link href="/admin" className="hover:text-[#5c3d2e]">
-            Admin
-          </Link>
-        </nav>
+        <nav className="flex justify-between items-center p-4 bg-white shadow">
+  
+
+  <div className="flex gap-4">
+    <a href="/">Accueil</a>
+    <a href="/products">Produits</a>
+    <a href="/admin">Admin</a>
+  </div>
+</nav>
+
+        
       </div>
     </header>
   );

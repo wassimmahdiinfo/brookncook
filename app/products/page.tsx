@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import ProductCard from "@/app/components/ProductCard";
 
 export default async function ProductsPage() {
   const { data, error } = await supabase
@@ -18,16 +19,7 @@ export default async function ProductsPage() {
       ) : (
         <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {data.map((p: any) => (
-            <div key={p.id} className="bg-white p-6 rounded-2xl shadow">
-              <h2 className="font-bold">{p.name}</h2>
-              <img
-  src={p.image}
-  alt={p.name}
-  className="w-full h-48 object-cover rounded-xl mb-3"
-/>
-              <p>{p.description}</p>
-              <p>{p.price}</p>
-            </div>
+            <ProductCard key={p.id} product={p} />
           ))}
         </div>
       )}
