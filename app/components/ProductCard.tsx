@@ -1,4 +1,7 @@
 export default function ProductCard({ product }: any) {
+  const message = encodeURIComponent(
+  `Bonjour, je souhaite commander : ${product.name} (${product.price} TND)`
+);
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
 
@@ -27,6 +30,18 @@ export default function ProductCard({ product }: any) {
           {product.price} TND
         </p>
       </div>
+      
+
+<a
+  href={`https://wa.me/21624244677?text=${message}`}
+  target="_blank"
+  className="mt-3 block text-center bg-[#25D366] text-white py-2 rounded-lg"
+>
+  Commander
+</a>
+<p className="text-xs text-center text-gray-500 mt-1">
+  Réponse rapide ⚡
+</p>
     </div>
   );
 }

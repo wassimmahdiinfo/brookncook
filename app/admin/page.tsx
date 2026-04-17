@@ -92,7 +92,7 @@ console.log("UPLOAD DATA:", data);
     ])
     .select();
 
-  await logAction("create", data?.[0]?.id);
+  await logAction("create", data?.[0]);
 
   setForm({ name: "", price: "", description: "" });
   setImageFile(null);
@@ -109,17 +109,32 @@ console.log("UPLOAD DATA:", data);
     });
   };
 
-  // 💾 Sauvegarder
+  
+
+  // 💾 UPDATE
+
   const handleUpdate = async () => {
   const confirmUpdate = confirm("Confirmer la modification ?");
   if (!confirmUpdate) return;
 
+  // 1. récupérer ancien produit
+  const { data: oldProduct } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", editingId)
+    .single();
+
+  // 2. log AVANT
+  await logAction("update_before", oldProduct);
+
+  // 3. upload image si besoin
   let imageUrl = null;
 
   if (imageFile) {
     imageUrl = await uploadImage();
   }
 
+  // 4. update
   await supabase
     .from("products")
     .update({
@@ -128,22 +143,39 @@ console.log("UPLOAD DATA:", data);
     })
     .eq("id", editingId);
 
-  await logAction("update", editingId);
+  // 5. log APRÈS
+  await logAction("update_after", {
+    ...oldProduct,
+    ...form,
+    image: imageUrl || oldProduct.image,
+  });
 
+  // reset
   setEditingId(null);
   setForm({ name: "", price: "", description: "" });
   setImageFile(null);
+
   fetchProducts();
 };
-
+  
   // ❌ Supprimer
   const handleDelete = async (id: string) => {
   const confirmDelete = confirm("Supprimer ce produit ?");
   if (!confirmDelete) return;
 
+  // 1. récupérer produit
+  const { data: product } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  // 2. log AVANT suppression
+  await logAction("delete", product);
+
+  // 3. suppression
   await supabase.from("products").delete().eq("id", id);
 
-  await logAction("delete", id);
   fetchProducts();
 };
   
@@ -183,6 +215,16 @@ if (loading) return <p>Loading...</p>;
 
   </div>
 
+</div>
+
+// lien "Voir historique"
+<div className="mb-6">
+  <a
+    href="/admin/history"
+    className="text-sm text-[#5c3d2e] underline hover:opacity-70"
+  >
+    Voir historique
+  </a>
 </div>
 
       {/* FORM */}
