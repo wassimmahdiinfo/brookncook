@@ -21,6 +21,10 @@ export default function Home() {
             Voir nos produits
           </a>
 
+          <p className="text-center text-sm text-gray-500 mt-4">
+            📍 Livraison à El Mourouj et environs
+          </p>
+
           <a
             href="/contact"
             className="border border-[#5c3d2e] text-[#5c3d2e] px-6 py-3 rounded-xl hover:bg-[#5c3d2e] hover:text-white transition"

@@ -10,7 +10,7 @@ export default function ProductCard({ product }: any) {
         <div className="overflow-hidden">
           <img
             src={product.image}
-            alt={product.name}
+            alt={`${product.name} fait maison Brook'n'Cook El Mourouj`}
             className="w-full h-52 object-cover hover:scale-105 transition duration-300"
           />
         </div>

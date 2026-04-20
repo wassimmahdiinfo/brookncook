@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Brook'n'Cook",
-  description: "Délices faits maison en Tunisie",
+  title: "Brook’n’Cook | Pâtisserie fait maison à El Mourouj 🍪",
+  description: "Découvrez nos cookies et brownies faits maison à El Mourouj. Sans conservateur, sans colorant, pur beurre. Commandez facilement sur WhatsApp.",
+  verification: {google: "yFZUA93TzaJL0KayzlPMZrA5D8qWt39dAVvMBwZWTTI",},
 };
 
 export default function RootLayout({

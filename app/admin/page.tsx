@@ -217,7 +217,7 @@ if (loading) return <p>Loading...</p>;
 
 </div>
 
-// lien "Voir historique"
+{/* lien "Voir historique" */}
 <div className="mb-6">
   <a
     href="/admin/history"

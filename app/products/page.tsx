@@ -8,9 +8,15 @@ export default async function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-[#fffaf5] px-6 py-12">
-      <h1 className="text-4xl font-bold text-center text-[#5c3d2e] mb-10">
-        🍰 Nos Produits
+      <h1 className="text-3xl font-bold text-center mb-6 text-[#5c3d2e]">
+        Cookies & Brownies faits maison à El Mourouj 🍪
       </h1>
+
+      <p className="text-center text-gray-600 max-w-xl mx-auto mb-10">
+        Brook’n’Cook vous propose des pâtisseries artisanales faites maison :
+        cookies, brownies et délices sans conservateur, sans colorant et 100% pur beurre.
+        Commandez facilement depuis El Mourouj et ses environs.
+      </p>
 
       {!data || data.length === 0 ? (
         <p className="text-center text-gray-500">
