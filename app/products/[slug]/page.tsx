@@ -1,7 +1,36 @@
 import { supabase } from "@/lib/supabaseClient";
 
-export default async function ProductPage({ params }: any) {
+export async function generateMetadata({ params }: any) {
   const { slug } = params;
+
+  const { data: product } = await supabase
+    .from("products")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
+  if (!product) {
+    return {
+      title: "Produit introuvable",
+    };
+  }
+
+  return {
+    title: `${product.name} fait maison à El Mourouj | Brook’n’Cook`,
+    description: `${product.name} fait maison chez Brook’n’Cook. Délice artisanal sans colorant ni conservateur. Disponible à El Mourouj et environs.`,
+    openGraph: {
+    title: product.name,
+    description: product.description,
+    images: [product.image],
+  },
+  };
+}
+
+export default async function ProductPage(props: any) {
+  const params = await props.params;
+  const slug = params.slug;
+
+  //console.log("SLUG:", params.slug);
 
   const { data: product } = await supabase
     .from("products")

@@ -19,7 +19,9 @@ export default function ProductCard({ product }: any) {
       {/* CONTENU */}
       <div className="p-4">
         <h2 className="font-semibold text-lg text-gray-800">
-          {product.name}
+          <a href={`/products/${product.slug}`}>
+            {product.name}
+          </a>
         </h2>
 
         <p className="text-sm text-gray-500 line-clamp-2 mb-2">
