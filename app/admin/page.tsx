@@ -81,12 +81,16 @@ console.log("UPLOAD DATA:", data);
   // ➕ Ajouter
   const handleAdd = async () => {
   const imageUrl = await uploadImage();
+  const slug = form.name
+  .toLowerCase()
+  .replaceAll(" ", "-");
 
   const { data } = await supabase
     .from("products")
     .insert([
       {
         ...form,
+        slug,
         image: imageUrl,
       },
     ])

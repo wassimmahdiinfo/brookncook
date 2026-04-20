@@ -1,12 +1,27 @@
-export default function sitemap() {
+import { supabase } from "@/lib/supabaseClient";
+
+export default async function sitemap() {
+  const baseUrl = "https://brookncook.vercel.app";
+
+  const { data: products } = await supabase
+    .from("products")
+    .select("slug");
+
+  const productUrls =
+    products?.map((p) => ({
+      url: `${baseUrl}/products/${p.slug}`,
+      lastModified: new Date(),
+    })) || [];
+
   return [
     {
-      url: "https://brookncook.vercel.app",
+      url: baseUrl,
       lastModified: new Date(),
     },
     {
-      url: "https://brookncook.vercel.app/products",
+      url: `${baseUrl}/products`,
       lastModified: new Date(),
     },
+    ...productUrls,
   ];
 }
