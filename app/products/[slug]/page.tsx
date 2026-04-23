@@ -1,7 +1,8 @@
 import { supabase } from "@/lib/supabaseClient";
 
-export async function generateMetadata({ params }: any) {
-  const { slug } = params;
+export async function generateMetadata(props: any) {
+  const params = await props.params;
+  const slug = params.slug;
 
   const { data: product } = await supabase
     .from("products")
@@ -32,17 +33,39 @@ export default async function ProductPage(props: any) {
 
   //console.log("SLUG:", params.slug);
 
-  const { data: product } = await supabase
+  const { data } = await supabase
     .from("products")
     .select("*")
     .eq("slug", slug)
-    .single();
+  
+  const product = data?.[0];
 
-  if (!product) return <p>Produit introuvable</p>;
+  if (!product) {
+    return (
+      <main className="p-6">
+        <h1>Produit introuvable</h1>
+      </main>
+    );
+  }
+
+  const schema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: product.name,
+  image: product.image,
+  description: product.description,
+  offers: {
+    "@type": "Offer",
+    price: product.price,
+    priceCurrency: "TND",
+    availability: "https://schema.org/InStock",
+  },
+};
 
   return (
+    
     <main className="p-6 bg-[#fffaf5] min-h-screen">
-
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}/>
       <h1 className="text-3xl font-bold text-[#5c3d2e] mb-4">
         {product.name}
       </h1>
