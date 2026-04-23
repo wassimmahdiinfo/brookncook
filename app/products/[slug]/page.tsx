@@ -63,25 +63,62 @@ export default async function ProductPage(props: any) {
 };
 
   return (
-    
-    <main className="p-6 bg-[#fffaf5] min-h-screen">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}/>
-      <h1 className="text-3xl font-bold text-[#5c3d2e] mb-4">
-        {product.name}
-      </h1>
+  <main className="min-h-screen bg-[#fffaf5] py-10 px-4">
+    <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
 
-      <img
-        src={product.image}
-        alt={`${product.name} fait maison Brook'n'Cook El Mourouj`}
-        className="w-full max-w-md rounded-xl mb-4"
-      />
+      {/* IMAGE */}
+      <div className="overflow-hidden rounded-2xl shadow-lg">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-[350px] object-cover hover:scale-105 transition duration-500"
+        />
+      </div>
 
-      <p className="text-gray-600 mb-4">{product.description}</p>
+      {/* INFOS */}
+      <div>
+        <h1 className="text-4xl font-bold text-[#5c3d2e] mb-4">
+          {product.name}
+        </h1>
 
-      <p className="text-xl font-bold text-[#5c3d2e]">
-        {product.price} TND
-      </p>
+        <p className="text-gray-600 mb-6 leading-relaxed">
+          {product.description}
+        </p>
 
-    </main>
-  );
+        <p className="text-2xl font-semibold text-[#5c3d2e] mb-6">
+          {product.price} TND
+        </p>
+
+        {/* BADGES */}
+        <div className="flex gap-3 mb-6 flex-wrap">
+          <span className="bg-white shadow px-3 py-1 rounded-full text-sm">
+            🧁 Fait maison
+          </span>
+          <span className="bg-white shadow px-3 py-1 rounded-full text-sm">
+            🚫 Sans conservateur
+          </span>
+          <span className="bg-white shadow px-3 py-1 rounded-full text-sm">
+            📍 El Mourouj
+          </span>
+        </div>
+
+        {/* CTA */}
+        <a
+          href={`https://wa.me/216XXXXXXXX?text=${encodeURIComponent(
+            `Bonjour, je souhaite commander :
+🍪 ${product.name}
+💰 ${product.price} TND`
+          )}`}
+          target="_blank"
+          className="block text-center bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg transition shadow-lg"
+        >
+          Commander sur WhatsApp
+        </a>
+        <p className="text-sm text-gray-500 mt-4 text-center">
+          ⚡ Réponse rapide sur WhatsApp
+        </p>
+      </div>
+    </div>
+  </main>
+);
 }
