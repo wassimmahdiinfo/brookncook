@@ -11,7 +11,7 @@ export default function ProductCard({ product }: any) {
           <img
             src={product.image}
             alt={`${product.name} fait maison Brook'n'Cook El Mourouj`}
-            className="w-full h-52 object-cover hover:scale-105 transition duration-300"
+            className="w-full h-52 object-cover transform hover:scale-105 transition duration-300"
           />
         </div>
       )}

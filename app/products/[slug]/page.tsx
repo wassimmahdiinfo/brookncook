@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import ProductCard from "@/app/components/ProductCard";
 
 export async function generateMetadata(props: any) {
   const params = await props.params;
@@ -48,6 +49,17 @@ export default async function ProductPage(props: any) {
     );
   }
 
+  const { data: reviews } = await supabase
+  .from("reviews")
+  .select("*")
+  .eq("product_id", product.id);
+
+  const { data: related } = await supabase
+  .from("products")
+  .select("*")
+  .neq("id", product.id)
+  .limit(3);
+
   const schema = {
   "@context": "https://schema.org",
   "@type": "Product",
@@ -63,62 +75,116 @@ export default async function ProductPage(props: any) {
 };
 
   return (
-  <main className="min-h-screen bg-[#fffaf5] py-10 px-4">
-    <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+  <main className="min-h-screen bg-[#fffaf5] py-12 px-4">
+    <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
 
       {/* IMAGE */}
-      <div className="overflow-hidden rounded-2xl shadow-lg">
+      <div className="relative group">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-[350px] object-cover hover:scale-105 transition duration-500"
+          className="w-full h-[400px] object-cover rounded-3xl shadow-xl transition duration-500 group-hover:scale-105"
         />
+
+        {/* badge top */}
+        <span className="absolute top-4 left-4 bg-white px-4 py-1 rounded-full text-sm shadow">
+          ⭐ Produit populaire
+        </span>
       </div>
 
-      {/* INFOS */}
+      {/* CONTENU */}
       <div>
-        <h1 className="text-4xl font-bold text-[#5c3d2e] mb-4">
+        <h1 className="text-4xl font-bold text-[#5c3d2e] mb-3">
           {product.name}
         </h1>
 
-        <p className="text-gray-600 mb-6 leading-relaxed">
+        {/* rating fake (temporaire) */}
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-yellow-500">★★★★★</span>
+          <span className="text-sm text-gray-500">(12 avis)</span>
+        </div>
+
+        <p className="text-gray-600 mb-6 leading-relaxed text-lg">
           {product.description}
         </p>
 
-        <p className="text-2xl font-semibold text-[#5c3d2e] mb-6">
+        <p className="text-3xl font-bold text-[#5c3d2e] mb-6">
           {product.price} TND
         </p>
 
-        {/* BADGES */}
-        <div className="flex gap-3 mb-6 flex-wrap">
-          <span className="bg-white shadow px-3 py-1 rounded-full text-sm">
-            🧁 Fait maison
-          </span>
-          <span className="bg-white shadow px-3 py-1 rounded-full text-sm">
+        <p className="text-sm text-red-500 mb-6 font-medium">
+          🔥 Stock limité aujourd’hui
+        </p>
+
+        {/* avantages */}
+        <div className="grid grid-cols-2 gap-3 mb-6 text-sm">
+          <div className="bg-white p-3 rounded-xl shadow">
+            🧁 100% fait maison
+          </div>
+          <div className="bg-white p-3 rounded-xl shadow">
             🚫 Sans conservateur
-          </span>
-          <span className="bg-white shadow px-3 py-1 rounded-full text-sm">
-            📍 El Mourouj
-          </span>
+          </div>
+          <div className="bg-white p-3 rounded-xl shadow">
+            🧈 Pur beurre
+          </div>
+          <div className="bg-white p-3 rounded-xl shadow">
+            📍 Livraison El Mourouj
+          </div>
         </div>
 
-        {/* CTA */}
+        {/* CTA principal */}
         <a
-          href={`https://wa.me/216XXXXXXXX?text=${encodeURIComponent(
+          href={`https://wa.me/21624244677?text=${encodeURIComponent(
             `Bonjour, je souhaite commander :
 🍪 ${product.name}
 💰 ${product.price} TND`
           )}`}
           target="_blank"
-          className="block text-center bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg transition shadow-lg"
+          className="block text-center bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg transition shadow-xl"
         >
           Commander sur WhatsApp
         </a>
-        <p className="text-sm text-gray-500 mt-4 text-center">
-          ⚡ Réponse rapide sur WhatsApp
+
+        {/* rassurance */}
+        <p className="text-center text-sm text-gray-500 mt-4">
+          ⚡ Réponse rapide • Commande en quelques clics
         </p>
       </div>
+
+      {/* AVIS */}
+      <div className="mt-20">
+        <h2 className="text-2xl font-bold text-[#5c3d2e] mb-6 text-center">
+          Avis clients
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {reviews?.map((r) => (
+            <div key={r.id} className="bg-white p-4 rounded-xl shadow">
+              <p className="text-yellow-500 mb-2">
+                {"★".repeat(r.rating)}
+              </p>
+              <p className="text-sm text-gray-600">{r.comment}</p>
+              <p className="mt-2 text-xs text-gray-400">— {r.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* PRODUITS SIMILAIRES */}
+      <div className="mt-20">
+        <h2 className="text-2xl font-bold text-[#5c3d2e] mb-6 text-center">
+          Autres délices 🍪
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {related?.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      </div>
+
     </div>
-  </main>
+
+ </main>
 );
 }
