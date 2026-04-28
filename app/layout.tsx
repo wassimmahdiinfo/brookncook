@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import WhatsAppButton from "@/app/components/WhatsAppButton";
 import { MessageCircle } from "lucide-react";
+import Footer from "@/app/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,11 +28,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="fr"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col"><Navbar />{children}<WhatsAppButton /></body>
+    <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="min-h-screen flex flex-col">
+        <main className="flex-grow">
+          <Navbar />{children}<WhatsAppButton />
+        </main>
+        <Footer />
+      </body>
     </html>
   );
 }

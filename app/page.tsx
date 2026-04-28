@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
-import ProductCard from "@/app/components/ProductCard";
 import HomeProducts from "@/app/components/HomeProducts";
 
 export default async function Home() {
@@ -13,20 +12,22 @@ export default async function Home() {
     <main className="bg-[#fffaf5] min-h-screen">
 
       {/* HERO */}
-      <section className="text-center py-20 px-6 max-w-4xl mx-auto">
-        <h1 className="text-5xl font-bold text-[#5c3d2e] mb-6">
-          🍪 Délices faits maison à El Mourouj
+      <section className="text-center py-24 px-6 max-w-4xl mx-auto">
+        <h1 className="text-5xl md:text-6xl font-bold text-[#5c3d2e] mb-6 leading-tight">
+          🍪 Délices faits maison <br /> à El Mourouj
         </h1>
 
-        <p className="text-lg text-gray-600 mb-8">
-          Brownies, cookies et douceurs artisanales sans conservateur.
-          Préparés avec passion ❤️
+        <p className="text-lg text-gray-600 mb-10">
+          Cookies, brownies et douceurs artisanales <br />
+          <span className="font-medium">
+            sans conservateur • faits avec passion ❤️
+          </span>
         </p>
 
         <div className="flex justify-center gap-4 flex-wrap">
           <Link
             href="/products"
-            className="bg-[#5c3d2e] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition"
+            className="bg-[#5c3d2e] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition shadow-lg"
           >
             Voir les produits
           </Link>
@@ -34,14 +35,14 @@ export default async function Home() {
           <a
             href="https://wa.me/21624244677"
             target="_blank"
-            className="bg-green-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-600 transition"
+            className="bg-green-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-600 transition shadow-lg"
           >
             Commander
           </a>
         </div>
 
-        <p className="mt-4 text-sm text-gray-500">
-          📍 Livraison à El Mourouj et environs
+        <p className="mt-6 text-sm text-gray-500">
+          📍 Livraison rapide à El Mourouj et environs
         </p>
       </section>
 
@@ -53,10 +54,10 @@ export default async function Home() {
 
         <HomeProducts products={products} />
 
-        <div className="text-center mt-8">
+        <div className="text-center mt-10">
           <Link
             href="/products"
-            className="text-[#5c3d2e] font-semibold underline"
+            className="text-[#5c3d2e] font-semibold underline hover:opacity-80"
           >
             Voir tous les produits →
           </Link>
@@ -64,57 +65,41 @@ export default async function Home() {
       </section>
 
       {/* AVANTAGES */}
-      <section className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 px-6 py-12">
-        <div className="bg-white p-6 rounded-xl shadow text-center">
-          🧁 <p className="font-semibold mt-2">100% fait maison</p>
+      <section className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 px-6 py-16">
+        <div className="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition text-center">
+          <p className="text-2xl mb-2">🧁</p>
+          <p className="font-semibold">100% fait maison</p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow text-center">
-          🚫 <p className="font-semibold mt-2">Sans conservateur</p>
+        <div className="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition text-center">
+          <p className="text-2xl mb-2">🚫</p>
+          <p className="font-semibold">Sans conservateur</p>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow text-center">
-          ⚡ <p className="font-semibold mt-2">Commande rapide</p>
+        <div className="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition text-center">
+          <p className="text-2xl mb-2">⚡</p>
+          <p className="font-semibold">Commande rapide</p>
         </div>
       </section>
 
       {/* CTA FINAL */}
-      <section className="text-center py-16">
+      <section className="text-center py-20 bg-white">
+        <h2 className="text-2xl font-bold text-[#5c3d2e] mb-4">
+          Prêt à commander ?
+        </h2>
+
+        <p className="text-gray-600 mb-6">
+          Réponse rapide sur WhatsApp ⚡
+        </p>
+
         <a
           href="https://wa.me/21624244677"
           target="_blank"
-          className="bg-green-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-green-600 transition"
+          className="bg-green-500 text-white px-10 py-4 rounded-xl text-lg font-semibold hover:bg-green-600 transition shadow-xl"
         >
-          Commander sur WhatsApp
+          Commander maintenant
         </a>
       </section>
-
-      {/* FOOTER (TON BLOC MARRON AMÉLIORÉ) */}
-      <footer className="bg-[#5c3d2e] text-white py-10 mt-10">
-        <div className="max-w-6xl mx-auto px-6 text-center space-y-4">
-
-          <h3 className="text-2xl font-bold">Brook’n’Cook</h3>
-
-          <p className="text-sm text-gray-200">
-            Délices faits maison • Sans conservateur • Qualité artisanale
-          </p>
-
-          <p className="text-sm">
-            📍 El Mourouj, Tunisie
-          </p>
-
-          <div className="flex justify-center gap-4 mt-4">
-            <a href="https://wa.me/21624244677" target="_blank">
-              WhatsApp
-            </a>
-            <a href="/products">Produits</a>
-          </div>
-
-          <p className="text-xs text-gray-300 mt-6">
-            © {new Date().getFullYear()} Brook’n’Cook — Tous droits réservés
-          </p>
-        </div>
-      </footer>
 
     </main>
   );
