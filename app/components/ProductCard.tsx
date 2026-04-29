@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image"
 
 export default function ProductCard({ product }: any) {
   return (
@@ -9,10 +10,12 @@ export default function ProductCard({ product }: any) {
 
         {/* IMAGE */}
         <div className="relative overflow-hidden">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-52 object-cover group-hover:scale-110 transition duration-500"
+          <Image
+          src={product.image}
+          alt={product.name}
+          width={400}
+          height={300}
+          className="w-full h-52 object-cover group-hover:scale-110 transition duration-500"
           />
 
           {/* BADGE */}

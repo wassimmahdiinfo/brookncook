@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {};
+const nextConfig: NextConfig = {
+  images: {
+    domains: ["jqlnjbcddkjntbomftqp.supabase.co"],
+  },
+};
 
 export default nextConfig;

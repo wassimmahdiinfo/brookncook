@@ -1,4 +1,7 @@
-import { supabase } from "@/lib/supabaseClient";
+//import { supabase } from "@/lib/supabaseClient";
+import { createServerClient } from "@/lib/supabase/server";
+
+const supabase = createServerClient()
 
 export const logAction = async (
   action: string,

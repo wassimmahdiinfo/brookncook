@@ -1,5 +1,9 @@
-import { supabase } from "@/lib/supabaseClient";
+//import { supabase } from "@/lib/supabaseClient";
+import { createServerClient } from "@/lib/supabase/server";
 import ProductCard from "@/app/components/ProductCard";
+import Image from "next/image"
+
+const supabase = createServerClient()
 
 export async function generateMetadata(props: any) {
   const params = await props.params;
@@ -74,16 +78,27 @@ export default async function ProductPage(props: any) {
   },
 };
 
+// RÉCUPÉRATION De LA PROMO deouis supabase
+const { data: promo } = await supabase
+  .from("promotions")
+  .select("*")
+  .eq("product_id", product.id)
+  .eq("is_active", true)
+  .single();
+
   return (
   <main className="min-h-screen bg-[#fffaf5] py-12 px-4">
     <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
 
       {/* IMAGE */}
       <div className="relative group">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-[400px] object-cover rounded-3xl shadow-xl transition duration-500 group-hover:scale-105"
+        <Image
+        src={product.image}
+        alt={product.name}
+        width={600}
+        height={400}
+        priority
+        className="w-full h-[400px] object-cover rounded-3xl shadow-xl"
         />
 
         {/* badge top */}
@@ -104,9 +119,12 @@ export default async function ProductPage(props: any) {
           <span className="text-sm text-gray-500">(12 avis)</span>
         </div>
 
-        <p className="text-gray-600 mb-6 leading-relaxed text-lg">
-          {product.description}
-        </p>
+        <ul className="mb-6 space-y-2 text-gray-700">
+          <li>🍪 Goût authentique fait maison</li>
+          <li>🧈 Ingrédients premium (pur beurre)</li>
+          <li>🚫 Aucun conservateur</li>
+          <li>⚡ Préparé frais à la commande</li>
+        </ul>
 
         <p className="text-3xl font-bold text-[#5c3d2e] mb-6">
           {product.price} TND
@@ -131,23 +149,33 @@ export default async function ProductPage(props: any) {
             📍 Livraison El Mourouj
           </div>
         </div>
+        
+        {/* Bloc Promo */}
+        {promo && (
+          <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-6 text-sm animate-pulse">
+            🎁 {promo.message}
+          </div>
+        )}
 
         {/* CTA principal */}
         <a
           href={`https://wa.me/21624244677?text=${encodeURIComponent(
             `Bonjour, je souhaite commander :
-🍪 ${product.name}
-💰 ${product.price} TND`
+            🍪 ${product.name}
+            💰 ${product.price} TND`
           )}`}
           target="_blank"
-          className="block text-center bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg transition shadow-xl"
-        >
-          Commander sur WhatsApp
+          className="block text-center bg-green-500 hover:bg-green-600 text-white py-5 rounded-xl font-bold text-xl transition shadow-2xl animate-pulse"
+          >
+            🛒 Commander maintenant sur WhatsApp
         </a>
 
         {/* rassurance */}
         <p className="text-center text-sm text-gray-500 mt-4">
           ⚡ Réponse rapide • Commande en quelques clics
+        </p>
+        <p className="text-xs text-gray-500 mt-2 text-center">
+          🔒 Paiement à la livraison • Satisfaction garantie
         </p>
       </div>
 

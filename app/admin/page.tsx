@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+//import { supabase } from "@/lib/supabaseClient";
+import { createServerClient } from "@/lib/supabase/server";
 import { useRouter } from "next/navigation";
 import { logAction } from "@/utils/logger";
+
+const supabase = createServerClient()
 
 export default function AdminPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -53,8 +56,8 @@ const uploadImage = async () => {
   .from("products")
   .upload(fileName, imageFile);
 
-console.log("UPLOAD ERROR:", error);
-console.log("UPLOAD DATA:", data);
+//console.log("UPLOAD ERROR:", error);
+//console.log("UPLOAD DATA:", data);
 
   if (error) {
     console.log(error);
@@ -76,6 +79,7 @@ console.log("UPLOAD DATA:", data);
 
   useEffect(() => {
     fetchProducts();
+    fetchPromotions();
   }, []);
 
   // ➕ Ajouter
@@ -182,6 +186,53 @@ console.log("UPLOAD DATA:", data);
 
   fetchProducts();
 };
+
+// ADD PROMO ///
+const [promoMessage, setPromoMessage] = useState("");
+const [selectedProductId, setSelectedProductId] = useState("");
+
+const handleAddPromo = async () => {
+  if (!selectedProductId || !promoMessage) return;
+
+  // désactiver anciennes promos
+  await supabase
+    .from("promotions")
+    .update({ is_active: false })
+    .eq("product_id", selectedProductId);
+
+  // ajouter nouvelle
+  await supabase.from("promotions").insert([
+    {
+      product_id: selectedProductId,
+      message: promoMessage,
+      is_active: true,
+    },
+  ]);
+
+  setPromoMessage("");
+  setSelectedProductId("");
+};
+
+// Affichage PROMO ///
+const [promotions, setPromotions] = useState<any[]>([]);
+// find promo
+const fetchPromotions = async () => {
+  const { data } = await supabase
+    .from("promotions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  setPromotions(data || []);
+};
+// Delete promo
+const handleDisablePromo = async (promoId: string) => {
+  await supabase
+    .from("promotions")
+    .update({ is_active: false })
+    .eq("id", promoId);
+
+  fetchPromotions(); // refresh
+};
   
 
 if (loading) return <p>Loading...</p>;
@@ -257,10 +308,10 @@ if (loading) return <p>Loading...</p>;
         />
 
         <input
-  type="file"
-  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-  className="w-full mb-3"
-/>
+        type="file"
+        onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+        className="w-full mb-3"
+        />
 
         {editingId ? (
           <button
@@ -279,8 +330,73 @@ if (loading) return <p>Loading...</p>;
         )}
       </div>
 
+      {/* Form Add PROMO */}
+
+      <div className="max-w-md mx-auto bg-white p-6 rounded-2xl shadow mb-10">
+        <h2 className="font-bold mb-4">Créer une promotion</h2>
+        
+        <select
+        className="w-full mb-3 p-2 border rounded"
+        onChange={(e) => setSelectedProductId(e.target.value)}
+        >
+          <option value="">Choisir produit</option>
+          {products.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+          </option>
+          ))}
+        </select>
+        
+        <input
+        placeholder="Message promo"
+        value={promoMessage}
+        onChange={(e) => setPromoMessage(e.target.value)}
+        className="w-full mb-3 p-2 border rounded"
+        />
+        
+        <button
+        onClick={handleAddPromo}
+        className="w-full bg-green-500 text-white py-2 rounded-xl"
+        >
+          Activer promo
+        </button>
+        
+      </div>
+
+    {/* Form Delete Prom */}
+
+    <div className="max-w-3xl mx-auto space-y-4 mb-10">
+      <h2 className="font-bold text-lg">Promotions actives</h2>
+      
+      {promotions.map((promo) => (
+        <div
+        key={promo.id}
+        className="bg-white p-4 rounded-xl shadow flex justify-between items-center"
+        >
+          <div>
+            <p className="font-medium">{promo.message}</p>
+            <p className="text-xs text-gray-500">
+              Produit ID: {promo.product_id}
+            </p>
+            <p className="text-xs">
+              {promo.is_active ? "🟢 Active" : "🔴 Désactivée"}
+            </p>
+          </div>
+          
+        <button
+        onClick={() => handleDisablePromo(promo.id)}
+        className="bg-red-500 text-white px-3 py-1 rounded"
+        >
+          Désactiver
+        </button>
+      </div>
+      ))}
+    </div>
+
+
       {/* LISTE */}
       <div className="max-w-3xl mx-auto space-y-4">
+        <h2 className="font-bold text-lg">Produits mis en vente</h2>
         {products.map((p) => (
           <div
             key={p.id}
