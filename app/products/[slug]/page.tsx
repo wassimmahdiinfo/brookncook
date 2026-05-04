@@ -2,6 +2,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import ProductCard from "@/app/components/ProductCard";
 import Image from "next/image"
+import Countdown from "@/app/components/Countdown";
 
 const supabase = createServerClient()
 
@@ -79,12 +80,19 @@ export default async function ProductPage(props: any) {
 };
 
 // RÉCUPÉRATION De LA PROMO deouis supabase
-const { data: promo } = await supabase
+const now = new Date().toISOString();
+
+const { data: promos } = await supabase
   .from("promotions")
   .select("*")
   .eq("product_id", product.id)
-  .eq("is_active", true)
-  .single();
+  .eq("is_active", true);
+
+const promo = promos?.find((p) => {
+  const startOk = !p.start_date || p.start_date <= now;
+  const endOk = !p.end_date || p.end_date >= now;
+  return startOk && endOk;
+});
 
   return (
   <main className="min-h-screen bg-[#fffaf5] py-12 px-4">
@@ -154,6 +162,15 @@ const { data: promo } = await supabase
         {promo && (
           <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-6 text-sm animate-pulse">
             🎁 {promo.message}
+          </div>
+        )}
+
+        {promo?.end_date && (
+          <div className="mb-6">
+            <Countdown endDate={promo.end_date} />
+            <p className="text-red-500 text-sm mt-2 font-medium">
+              ⚠️ Cette offre expire bientôt
+            </p>
           </div>
         )}
 

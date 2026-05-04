@@ -194,23 +194,35 @@ const [selectedProductId, setSelectedProductId] = useState("");
 const handleAddPromo = async () => {
   if (!selectedProductId || !promoMessage) return;
 
-  // désactiver anciennes promos
   await supabase
     .from("promotions")
     .update({ is_active: false })
     .eq("product_id", selectedProductId);
 
-  // ajouter nouvelle
-  await supabase.from("promotions").insert([
+  const { error } = await supabase.from("promotions").insert([
     {
       product_id: selectedProductId,
       message: promoMessage,
       is_active: true,
+      start_date: startDate ? new Date(startDate).toISOString() : null,
+      end_date: endDate ? new Date(endDate).toISOString() : null,
     },
   ]);
 
+  if (error) {
+    console.log(error);
+    alert("Erreur promo");
+    return;
+  }
+
+  alert("Promo créée ✅");
+
   setPromoMessage("");
   setSelectedProductId("");
+  setStartDate("");
+  setEndDate("");
+
+  fetchPromotions();
 };
 
 // Affichage PROMO ///
@@ -219,12 +231,18 @@ const [promotions, setPromotions] = useState<any[]>([]);
 const fetchPromotions = async () => {
   const { data } = await supabase
     .from("promotions")
-    .select("*")
+    .select(`
+      *,
+      products (
+        id,
+        name
+      )
+    `)
     .order("created_at", { ascending: false });
 
   setPromotions(data || []);
 };
-// Delete promo
+// Disable promo
 const handleDisablePromo = async (promoId: string) => {
   await supabase
     .from("promotions")
@@ -233,6 +251,36 @@ const handleDisablePromo = async (promoId: string) => {
 
   fetchPromotions(); // refresh
 };
+
+// Enable promo
+//const handleEnablePromo = async (promoId: string) => {
+  //await supabase
+    //.from("promotions")
+    //.update({ is_active: true })
+    //.eq("id", promoId);
+
+  //fetchPromotions();
+//};
+
+// UNE SEULE promo active par produit
+const handleEnablePromo = async (promo: any) => {
+  // désactiver autres promos du produit
+  await supabase
+    .from("promotions")
+    .update({ is_active: false })
+    .eq("product_id", promo.product_id);
+
+  // activer celle-ci
+  await supabase
+    .from("promotions")
+    .update({ is_active: true })
+    .eq("id", promo.id);
+
+  fetchPromotions();
+};
+
+const [startDate, setStartDate] = useState("");
+const [endDate, setEndDate] = useState("");
   
 
 if (loading) return <p>Loading...</p>;
@@ -353,6 +401,20 @@ if (loading) return <p>Loading...</p>;
         onChange={(e) => setPromoMessage(e.target.value)}
         className="w-full mb-3 p-2 border rounded"
         />
+
+        <input
+  type="datetime-local"
+  value={startDate}
+  onChange={(e) => setStartDate(e.target.value)}
+  className="w-full mb-3 p-2 border rounded"
+/>
+
+<input
+  type="datetime-local"
+  value={endDate}
+  onChange={(e) => setEndDate(e.target.value)}
+  className="w-full mb-3 p-2 border rounded"
+/>
         
         <button
         onClick={handleAddPromo}
@@ -363,35 +425,58 @@ if (loading) return <p>Loading...</p>;
         
       </div>
 
-    {/* Form Delete Prom */}
+    {/* Form Enable/Disable Prom */}
 
     <div className="max-w-3xl mx-auto space-y-4 mb-10">
-      <h2 className="font-bold text-lg">Promotions actives</h2>
-      
-      {promotions.map((promo) => (
-        <div
-        key={promo.id}
-        className="bg-white p-4 rounded-xl shadow flex justify-between items-center"
-        >
-          <div>
-            <p className="font-medium">{promo.message}</p>
-            <p className="text-xs text-gray-500">
-              Produit ID: {promo.product_id}
-            </p>
-            <p className="text-xs">
-              {promo.is_active ? "🟢 Active" : "🔴 Désactivée"}
-            </p>
-          </div>
-          
-        <button
-        onClick={() => handleDisablePromo(promo.id)}
-        className="bg-red-500 text-white px-3 py-1 rounded"
-        >
-          Désactiver
-        </button>
+  <h2 className="font-bold text-lg">Promotions</h2>
+
+  {promotions.map((promo) => (
+    <div
+      key={promo.id}
+      className="bg-white p-4 rounded-xl shadow flex justify-between items-center"
+    >
+      {/* LEFT */}
+      <div>
+        <p className="font-medium">{promo.message}</p>
+
+        <p className="text-xs text-gray-500">
+          Produit: {promo.products?.name}
+        </p>
+
+        <p className="text-xs text-gray-400">
+          ⏱ Début: {promo.start_date || "immédiat"}
+        </p>
+
+        <p className="text-xs text-gray-400">
+          ⏱ Fin: {promo.end_date || "illimité"}
+        </p>
+
+        <p className="text-xs mt-1">
+          {promo.is_active ? "🟢 Active" : "🔴 Désactivée"}
+        </p>
       </div>
-      ))}
+
+      {/* RIGHT BUTTON */}
+      <div>
+        {promo.is_active ? (
+          <button
+            onClick={() => handleDisablePromo(promo.id)}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm"
+          >
+            Désactiver
+          </button>
+        ) : (
+          <button
+            onClick={() => handleEnablePromo(promo)}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm"
+          >
+            Réactiver
+          </button>
+        )}
+      </div>
     </div>
+  ))}
+</div>
 
 
       {/* LISTE */}

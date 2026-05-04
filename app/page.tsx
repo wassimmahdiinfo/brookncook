@@ -1,6 +1,9 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient";
+//import { supabase } from "@/lib/supabaseClient";
+import { createServerClient } from "@/lib/supabase/server";
 import HomeProducts from "@/app/components/HomeProducts";
+
+const supabase = createServerClient()
 
 export default async function Home() {
   const { data: products } = await supabase

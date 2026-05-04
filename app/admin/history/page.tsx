@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+//import { supabase } from "@/lib/supabaseClient";
+import { createServerClient } from "@/lib/supabase/server";
+
+const supabase = createServerClient()
 
 export default function HistoryPage() {
   const [logs, setLogs] = useState<any[]>([]);

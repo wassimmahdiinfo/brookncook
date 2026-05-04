@@ -13,21 +13,16 @@ export default function Navbar() {
             alt="Brook'n'Cook"
             width={140}
             height={90}
+            priority
             className="object-contain w-[120px] h-auto"
           />
         </Link>
 
         {/* MENU */}
-        <nav className="flex justify-between items-center p-4 bg-white shadow">
-  
-
-  <div className="flex gap-4">
-    <a href="/">Accueil</a>
-    <a href="/products">Produits</a>
-    <a href="/admin">Admin</a>
-  </div>
-</nav>
-
+        <nav className="flex gap-6">
+          <Link href="/">Accueil</Link>
+          <Link href="/products">Produits</Link>
+        </nav>
         
       </div>
     </header>

@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://brookncook.vercel.app"),
   title: "Brook’n’Cook | Pâtisserie fait maison à El Mourouj 🍪",
   description: "Découvrez nos cookies et brownies faits maison à El Mourouj. Sans conservateur, sans colorant, pur beurre. Commandez facilement sur WhatsApp.",
   verification: {google: "yFZUA93TzaJL0KayzlPMZrA5D8qWt39dAVvMBwZWTTI",},
