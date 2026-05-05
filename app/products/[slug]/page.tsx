@@ -88,7 +88,7 @@ const { data: promos } = await supabase
   .eq("product_id", product.id)
   .eq("is_active", true);
 
-const promo = promos?.find((p) => {
+const validPromos = (promos || []).filter((p) => {
   const startOk = !p.start_date || p.start_date <= now;
   const endOk = !p.end_date || p.end_date >= now;
   return startOk && endOk;
@@ -159,15 +159,28 @@ const promo = promos?.find((p) => {
         </div>
         
         {/* Bloc Promo */}
-        {promo && (
-          <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-6 text-sm animate-pulse">
-            🎁 {promo.message}
-          </div>
-        )}
+        {validPromos?.length > 0 && (
+          <div className="mb-6 space-y-3">
+            
+            {/* PROMO PRINCIPALE */}
+            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl animate-pulse">
+              🎁 {validPromos[0].message}
+            </div>
+            
+            {/* AUTRES PROMOS */}
+        
+            {validPromos.slice(1).map((p) => (
+              <div key={p.id} className="text-sm text-gray-600">
+                👉 {p.message}
+              </div>
+            ))}
 
-        {promo?.end_date && (
+          </div>
+)}
+
+        {validPromos?.[0]?.end_date && (
           <div className="mb-6">
-            <Countdown endDate={promo.end_date} />
+            <Countdown endDate={validPromos[0].end_date} />
             <p className="text-red-500 text-sm mt-2 font-medium">
               ⚠️ Cette offre expire bientôt
             </p>
