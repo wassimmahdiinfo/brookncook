@@ -88,11 +88,13 @@ const { data: promos } = await supabase
   .eq("product_id", product.id)
   .eq("is_active", true);
 
-const validPromos = (promos || []).filter((p) => {
-  const startOk = !p.start_date || p.start_date <= now;
-  const endOk = !p.end_date || p.end_date >= now;
-  return startOk && endOk;
-});
+const validPromos = (promos || [])
+  .filter((p) => {
+    const startOk = !p.start_date || p.start_date <= now;
+    const endOk = !p.end_date || p.end_date >= now;
+    return startOk && endOk;
+  })
+  .sort((a, b) => b.priority - a.priority);
 
   return (
   <main className="min-h-screen bg-[#fffaf5] py-12 px-4">

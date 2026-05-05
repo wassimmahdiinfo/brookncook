@@ -7,7 +7,8 @@ const supabase = createServerClient()
 export default async function ProductsPage() {
   const { data, error } = await supabase
     .from("products")
-    .select("*");
+    .select("*")
+    .eq("is_active", true);
 
   return (
     <main className="min-h-screen bg-[#fffaf5] px-6 py-12">

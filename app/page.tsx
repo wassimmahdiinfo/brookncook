@@ -9,6 +9,7 @@ export default async function Home() {
   const { data: products } = await supabase
     .from("products")
     .select("*")
+    .eq("is_active", true)
     .limit(3);
 
   return (
