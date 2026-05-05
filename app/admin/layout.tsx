@@ -29,7 +29,7 @@ export default function AdminLayout({ children }: any) {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        router.push("/login");
+        router.push("/admin/login");
       } else {
         setUser(user);
       }
@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: any) {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push("/login");
+    router.push("/admin/login");
   };
 
   const linkClass = (path: string) =>
