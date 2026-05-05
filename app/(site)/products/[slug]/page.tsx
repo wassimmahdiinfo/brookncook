@@ -1,8 +1,8 @@
 //import { supabase } from "@/lib/supabaseClient";
 import { createServerClient } from "@/lib/supabase/server";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "@/components/ProductCard";
 import Image from "next/image"
-import Countdown from "@/app/components/Countdown";
+import Countdown from "@/components/Countdown";
 
 const supabase = createServerClient()
 

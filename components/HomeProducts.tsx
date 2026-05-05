@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "@/components/ProductCard";
 
 export default function HomeProducts({ products }: any) {
   return (

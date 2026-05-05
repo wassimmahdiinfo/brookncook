@@ -4,6 +4,18 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
+import "@/app/globals.css";
+import { Geist, Geist_Mono } from "next/font/google";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export default function AdminLayout({ children }: any) {
   const pathname = usePathname();
@@ -39,6 +51,8 @@ export default function AdminLayout({ children }: any) {
     }`;
 
   return (
+    <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="min-h-screen flex flex-col">
     <div className="flex min-h-screen">
 
       {/* SIDEBAR */}
@@ -108,5 +122,7 @@ export default function AdminLayout({ children }: any) {
       </main>
 
     </div>
+    </body>
+    </html>
   );
 }

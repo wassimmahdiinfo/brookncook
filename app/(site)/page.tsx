@@ -1,7 +1,7 @@
 import Link from "next/link";
 //import { supabase } from "@/lib/supabaseClient";
 import { createServerClient } from "@/lib/supabase/server";
-import HomeProducts from "@/app/components/HomeProducts";
+import HomeProducts from "@/components/HomeProducts";
 
 const supabase = createServerClient()
 

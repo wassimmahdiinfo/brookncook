@@ -1,6 +1,6 @@
 //import { supabase } from "@/lib/supabaseClient";
 import { createServerClient } from "@/lib/supabase/server";
-import ProductCard from "@/app/components/ProductCard";
+import ProductCard from "@/components/ProductCard";
 
 const supabase = createServerClient()
 
