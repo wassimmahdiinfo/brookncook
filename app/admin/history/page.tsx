@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-//import { supabase } from "@/lib/supabaseClient";
-import { createServerClient } from "@/lib/supabase/server";
+import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
 
-const supabase = createServerClient()
 
 export default function HistoryPage() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -76,7 +75,13 @@ export default function HistoryPage() {
       <p>Prix: {log.price} TND</p>
 
       {log.image && (
-        <img src={log.image} className="w-20 mt-2 rounded" />
+        <Image
+        src={log.image}
+        alt={log.name}
+        width={80}
+        height={80}
+        className="w-20 mt-2 rounded"
+        />
       )}
     </div>
   </details>

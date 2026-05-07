@@ -1,12 +1,13 @@
-//import { supabase } from "@/lib/supabaseClient";
+//app/(site)/products/[slug]/page.tsx
 import { createServerClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
 import Image from "next/image"
 import Countdown from "@/components/Countdown";
 
-const supabase = createServerClient()
+
 
 export async function generateMetadata(props: any) {
+  const supabase = await createServerClient()
   const params = await props.params;
   const slug = params.slug;
 
@@ -34,6 +35,7 @@ export async function generateMetadata(props: any) {
 }
 
 export default async function ProductPage(props: any) {
+  const supabase = await createServerClient()
   const params = await props.params;
   const slug = params.slug;
 
@@ -101,15 +103,17 @@ const validPromos = (promos || [])
     <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
 
       {/* IMAGE */}
-      <div className="relative group">
+      <div className="relative w-full h-[400px]">
+        {product.image && (
         <Image
         src={product.image}
         alt={product.name}
-        width={600}
-        height={400}
+        fill
         priority
-        className="w-full h-[400px] object-cover rounded-3xl shadow-xl"
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className="object-cover rounded-3xl shadow-xl"
         />
+        )}
 
         {/* badge top */}
         <span className="absolute top-4 left-4 bg-white px-4 py-1 rounded-full text-sm shadow">

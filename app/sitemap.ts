@@ -1,7 +1,8 @@
+//app/sitemap.ts
 import { createServerClient } from "@/lib/supabase/server";
 
 export default async function sitemap() {
-  const supabase = createServerClient();
+  const supabase = await createServerClient()
   const baseUrl = "https://brookncook.vercel.app";
 
   const { data: products } = await supabase

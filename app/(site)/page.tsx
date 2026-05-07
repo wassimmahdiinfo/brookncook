@@ -1,11 +1,10 @@
+//app/(site)/page.tsx
 import Link from "next/link";
-//import { supabase } from "@/lib/supabaseClient";
 import { createServerClient } from "@/lib/supabase/server";
 import HomeProducts from "@/components/HomeProducts";
 
-const supabase = createServerClient()
-
 export default async function Home() {
+  const supabase = await createServerClient()
   const { data: products } = await supabase
     .from("products")
     .select("*")

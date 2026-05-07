@@ -1,10 +1,8 @@
-//import { supabase } from "@/lib/supabaseClient";
 import { createServerClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
 
-const supabase = createServerClient()
-
 export default async function ProductsPage() {
+  const supabase = await createServerClient()
   const { data, error } = await supabase
     .from("products")
     .select("*")

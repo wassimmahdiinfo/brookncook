@@ -3,20 +3,23 @@
 import Link from "next/link";
 import Image from "next/image"
 
-export default function ProductCard({ product }: any) {
+export default function ProductCard({ product, priority = false }: { product: any, priority?: boolean }) {
   return (
     <Link href={`/products/${product.slug}`}>
       <div className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition duration-300 overflow-hidden cursor-pointer">
 
         {/* IMAGE */}
-        <div className="relative overflow-hidden">
-          <Image
-          src={product.image}
-          alt={product.name}
-          width={400}
-          height={300}
-          className="w-full h-52 object-cover group-hover:scale-110 transition duration-500"
-          />
+        <div className="relative h-52 overflow-hidden">
+          {product.image && (
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              loading={priority ? "eager" : "lazy"}
+              className="object-cover group-hover:scale-110 transition duration-500"
+            />
+          )}
 
           {/* BADGE */}
           <span className="absolute top-3 left-3 bg-white text-xs px-3 py-1 rounded-full shadow">
@@ -26,21 +29,16 @@ export default function ProductCard({ product }: any) {
 
         {/* CONTENT */}
         <div className="p-4">
-
           <h2 className="font-semibold text-lg text-[#5c3d2e] mb-1">
             {product.name}
           </h2>
-
           <p className="text-gray-500 text-sm mb-3 line-clamp-2">
             {product.description}
           </p>
-
           <div className="flex items-center justify-between">
             <p className="font-bold text-[#5c3d2e]">
               {product.price} TND
             </p>
-
-            {/* CTA */}
             <span className="text-sm bg-[#5c3d2e] text-white px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition">
               Voir
             </span>

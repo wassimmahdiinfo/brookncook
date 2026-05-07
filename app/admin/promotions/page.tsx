@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-//import { supabase } from "@/lib/supabaseClient";
-import { createServerClient } from "@/lib/supabase/server";
+import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { logAction } from "@/utils/logger";
 
-const supabase = createServerClient()
 
 export default function AdminPage() {
   const [products, setProducts] = useState<any[]>([]);

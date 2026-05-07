@@ -17,15 +17,15 @@ export default function HomeProducts({ products }: any) {
       }}
       className="grid md:grid-cols-3 gap-6"
     >
-      {products?.map((p: any) => (
+      {products?.map((p: any, index: number) => (
         <motion.div
-          key={p.id}
-          variants={{
-            hidden: { opacity: 0, y: 30 },
-            visible: { opacity: 1, y: 0 },
-          }}
+        key={p.id}
+        variants={{
+          hidden: { opacity: 0, y: 30 },
+          visible: { opacity: 1, y: 0 },
+        }}
         >
-          <ProductCard product={p} />
+        <ProductCard product={p} priority={index === 0} />
         </motion.div>
       ))}
     </motion.div>

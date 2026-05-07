@@ -1,46 +1,46 @@
+//app/admin/layout.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
-import "@/app/globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export default function AdminLayout({ children }: any) {
   const pathname = usePathname();
   const router = useRouter();
+
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.push("/admin/login");
-      } else {
-        setUser(user);
+    // 1. Écouter les changements d'auth en temps réel
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          setUser(session.user);
+        } else {
+          setUser(null);
+          router.replace("/admin/login");
+        }
+        setLoading(false);
       }
-    };
+    );
 
-    getUser();
+    return () => subscription.unsubscribe();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Chargement...</p>
+      </div>
+    );
+  }
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push("/admin/login");
+    router.replace("/admin/login");
   };
 
   const linkClass = (path: string) =>
@@ -51,55 +51,25 @@ export default function AdminLayout({ children }: any) {
     }`;
 
   return (
-    <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-screen flex flex-col">
     <div className="flex min-h-screen">
-
-      {/* SIDEBAR */}
       <aside className="w-64 bg-[#5c3d2e] text-white p-6 hidden md:flex flex-col justify-between">
-
-        {/* TOP */}
         <div>
-          <h2 className="text-2xl font-bold mb-8">Brook’n’Cook Admin</h2>
-
-          <nav className="space-y-2">
-            <Link href="/admin" className={linkClass("/admin")}>
-              📊 Dashboard
-            </Link>
-
-            <Link href="/admin/products" className={linkClass("/admin/products")}>
-              📦 Produits
-            </Link>
-
-            <Link href="/admin/promotions" className={linkClass("/admin/promotions")}>
-              🎁 Promotions
-            </Link>
-
-            <Link href="/admin/orders" className={linkClass("/admin/orders")}>
-              🧾 Commandes
-            </Link>
-
-            <Link href="/admin/messages" className={linkClass("/admin/messages")}>
-              💬 Messages
-            </Link>
-
-            <Link href="/admin/abandoned" className={linkClass("/admin/abandoned")}>
-              🛒 Panier abandonné
-            </Link>
-
-            <Link href="/admin/history" className={linkClass("/admin/history")}>
-              📜 Historique
-            </Link>
+          <h2 className="text-2xl font-bold mb-8">Brook'n'Cook Admin</h2>
+          <nav className="flex flex-col gap-2">
+            <Link href="/admin" className={`${linkClass("/admin")} block`}>📊 Dashboard</Link>
+            <Link href="/admin/products" className={`${linkClass("/admin/products")} block`}>📦 Produits</Link>
+            <Link href="/admin/promotions" className={`${linkClass("/admin/promotions")} block`}>🎁 Promotions</Link>
+            <Link href="/admin/orders" className={`${linkClass("/admin/orders")} block`}>🧾 Commandes</Link>
+            <Link href="/admin/messages" className={`${linkClass("/admin/messages")} block`}>💬 Messages</Link>
+            <Link href="/admin/abandoned" className={`${linkClass("/admin/abandoned")} block`}>🛒 Panier abandonné</Link>
+            <Link href="/admin/history" className={`${linkClass("/admin/history")} block`}>📜 Historique</Link>
           </nav>
         </div>
-
-        {/* BOTTOM */}
         <div>
           <div className="mb-4 text-sm">
             <p className="text-gray-300">Connecté en tant que</p>
             <p className="font-medium">{user?.email}</p>
           </div>
-
           <button
             onClick={handleLogout}
             className="w-full bg-white text-[#5c3d2e] py-2 rounded-lg font-semibold hover:opacity-90"
@@ -107,22 +77,10 @@ export default function AdminLayout({ children }: any) {
             Se déconnecter
           </button>
         </div>
-
       </aside>
-
-      {/* MOBILE HEADER */}
-      <div className="md:hidden fixed top-0 left-0 right-0 bg-[#5c3d2e] text-white p-4 flex justify-between z-50">
-        <span>Admin</span>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-
-      {/* CONTENT */}
-      <main className="flex-1 bg-[#fffaf5] p-6 md:ml-0 mt-16 md:mt-0">
+      <main className="flex-1 bg-[#fffaf5] p-6">
         {children}
       </main>
-
     </div>
-    </body>
-    </html>
   );
 }
